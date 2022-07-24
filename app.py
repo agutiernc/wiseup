@@ -29,7 +29,13 @@ def main_page():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_user():
-    '''Display and process user registration form.'''
+    ''' Display and process new user registration form.
+    
+        If form not valid, present form. Otherwise, redirect to main page.
+
+        If the there already is a user with that username: flash message
+        and redirect to form.
+    '''
 
     form = UserForm()
 
@@ -57,6 +63,29 @@ def register_user():
         return render_template('secret.html')
     else:
         return render_template('/users/register.html', form=form)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    '''Handle user login.'''
+
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        # authenticate user
+        user = User.authenticate(form.username.data, form.password.data)
+
+        if user:
+            # add user to session when logged in
+            session['username'] = user.username
+
+            return redirect('index.html')
+        else:
+            form.username.errors = ['Invalid username/password']
+    
+    return render_template('/users/login.html', form=form)
+
+
 
 @app.route('/logout')
 def logout_user():

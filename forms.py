@@ -16,6 +16,7 @@ class UserForm(FlaskForm):
     password = PasswordField('Password',
                 validators=[
                     InputRequired(),
+                    Length(min=6),
                     EqualTo('confirm', message='Passwords must match')
                 ])
 
@@ -32,4 +33,4 @@ class LoginForm(FlaskForm):
     '''Login Form.'''
 
     username = StringField('Username', validators=[InputRequired()])
-    password = PasswordField('Password', validators=[InputRequired()])
+    password = PasswordField('Password', validators=[InputRequired(), Length(min=6)])

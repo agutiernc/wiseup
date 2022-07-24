@@ -61,13 +61,13 @@ class Favorites(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'))
 
-    fav_type = db.Column(db.String(4), nullable=False)
+    type = db.Column(db.String(4), nullable=False)
 
-    fav_title = db.Column(db.Text, nullable=False)
+    title = db.Column(db.Text, nullable=False)
 
     url = db.Column(db.Text)
 
-    punchline = db.Column(db.Text)
+    text = db.Column(db.Text)
 
     comments = db.Column(db.ARRAY(db.Text()))
 
