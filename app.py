@@ -1,9 +1,10 @@
 from flask import Flask, redirect, render_template, session
 from flask_debugtoolbar import DebugToolbarExtension
-from psycopg2 import IntegrityError
+from sqlalchemy.exc import IntegrityError
 from models import connect_db, db, User
 from forms import UserForm, LoginForm
-from reddit_api import get_data, res_new, res_top
+from reddit_api import res_new, res_top, res_joke
+import random
 
 app = Flask(__name__)
 
@@ -18,6 +19,23 @@ debug = DebugToolbarExtension(app)
 
 connect_db(app)
 
+def get_data(data):
+    '''Retrieve JSON data.'''
+
+    post_info = []
+
+    for post in data.json()['data']['children']:
+        # print(post['data']['title'])
+        # print(post['data']['url'])
+
+        post_info.append({ 
+            'title': post['data']['title'],
+            'url': post['data']['url']
+        })
+    
+    return post_info
+
+
 @app.route('/')
 def main_page():
     '''Main page w/links to login or user registration.'''
@@ -25,7 +43,7 @@ def main_page():
     return redirect('/register')
 
 ##############################################################################
-# User signup/login/logout
+# User routes
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_user():
@@ -67,7 +85,10 @@ def register_user():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    '''Handle user login.'''
+    ''' Handle user login and add to session.
+        
+        If username/password is valid, redirect to user's feed.
+    '''
 
     form = LoginForm()
 
@@ -79,7 +100,7 @@ def login():
             # add user to session when logged in
             session['username'] = user.username
 
-            return redirect('index.html')
+            return redirect(f'/users/{user.username}')
         else:
             form.username.errors = ['Invalid username/password']
     
@@ -94,3 +115,80 @@ def logout_user():
     session.pop('username')
 
     return redirect('/')
+
+
+##############################################################################
+# User's home page that displays TILs and Joke
+
+@app.route('/users/<username>')
+def show_home(username):
+    '''Display user's feed.'''
+
+    # only logged in user can view
+    if 'username' not in session or username != session['username']:
+        return redirect('/login')
+
+    top_posts = get_data(res_top)
+
+    random_posts = random.sample(top_posts, 5)
+
+    return render_template('/users/home.html', top=random_posts)
+
+
+@app.route('/users/<username>/profile', methods=['GET', 'POST'])
+def users_profile(username):
+    '''Display user's profile and allow to update/delete account.'''
+
+    # only logged in user can view
+    if 'username' not in session or username != session['username']:
+        return redirect('/login')
+
+    # get user info
+    user = User.query.filter_by(username=username).first()
+
+    form = UserForm(obj=user)
+
+    if form.validate_on_submit():
+        user.username = form.username.data
+        user.email = form.email.data
+
+        # commit new data to db
+        db.session.commit()
+
+        return redirect(f'/users/{username}')
+    
+    return render_template('/users/profile.html', form=form)
+
+@app.route('/users/delete', methods=["POST"])
+def delete_user():
+    '''Delete user.'''
+
+    # get user
+    user = User.query.filter_by(username=session['username']).first()
+
+    # only current user can delete their own account
+    if 'username' not in session or user.username != session['username']:
+        return redirect('/login')
+    
+    # delete user from db
+    db.session.delete(user)
+    db.session.commit()
+
+    # remove user from session
+    session.pop('username')
+
+    return redirect('/')
+
+
+
+
+"""
+    ToDos:
+    add notifications
+    style pages
+    maybe add a form for user profile instead of UserForm
+    organize data lists and add save icon
+    get joke api working
+        - joke is added to the top w/refresh button to get new joke
+            - needs save icon too
+"""

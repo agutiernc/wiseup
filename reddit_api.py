@@ -1,5 +1,4 @@
 from secrets import CLIENT_ID, CLIENT_SECRET, USERNAME, PASSWORD
-# from flask import Flask
 import requests
 
 # Authenticate reddit app
@@ -27,7 +26,7 @@ if response.status_code == 200:
 OAUTH_ENDPOINT = 'https://oauth.reddit.com'
 
 params_get = {
-    'limit': 10
+    'limit': 20
 }
 
 headers_get = {
@@ -38,6 +37,9 @@ headers_get = {
 res_top = requests.get(OAUTH_ENDPOINT + '/r/TodayILearned/top', headers=headers_get, params=params_get)
 res_new = requests.get(OAUTH_ENDPOINT + '/r/TodayILearned/new', headers=headers_get, params=params_get)
 
+# test to see if it returns joke data
+res_joke = requests.get(OAUTH_ENDPOINT + '/r/Jokes/random', headers=headers_get, params=params_get)
+
 # print(res_top)
 # print(response2.json())
 
@@ -46,20 +48,20 @@ res_new = requests.get(OAUTH_ENDPOINT + '/r/TodayILearned/new', headers=headers_
 #     print(post['data']['url'])
 
 
-def get_data(data):
-    '''Retrieve JSON type.'''
-    post_info = []
+# def get_data(data):
+#     '''Retrieve JSON type.'''
+#     post_info = []
 
-    for post in data.json()['data']['children']:
-        # print(post['data']['title'])
-        # print(post['data']['url'])
+#     for post in data.json()['data']['children']:
+#         # print(post['data']['title'])
+#         # print(post['data']['url'])
 
-        post_info.append({ 
-            'title': post['data']['title'],
-            'url': post['data']['url']
-        })
+#         post_info.append({ 
+#             'title': post['data']['title'],
+#             'url': post['data']['url']
+#         })
     
-    return post_info
+#     return post_info
 
 
 # print(get_data(res_top)[0])

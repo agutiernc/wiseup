@@ -1,0 +1,18 @@
+{% extends './base.html' %}
+
+{% block content %}
+
+<h1>Topics</h1>
+
+<ul>
+  {% for data in top %}
+    <li>
+      <a href="{{ data.url }}">{{ data.title }}</a>
+    </li>
+
+  {% endfor %}
+</ul>
+
+<a href="/logout">Logout?</a>
+
+{% endblock %}
