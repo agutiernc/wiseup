@@ -1,8 +1,9 @@
 from flask import Flask, redirect, render_template, session
 from flask_debugtoolbar import DebugToolbarExtension
+from flask_bcrypt import Bcrypt
 from sqlalchemy.exc import IntegrityError
 from models import connect_db, db, User
-from forms import UserForm, LoginForm
+from forms import UserForm, LoginForm, UpdateEmailForm, UpdatePasswordForm
 from reddit_api import res_new, res_top, res_joke
 import random
 
@@ -18,6 +19,8 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 debug = DebugToolbarExtension(app)
 
 connect_db(app)
+
+bcrypt = Bcrypt()
 
 def get_data(data):
     '''Retrieve JSON data.'''
@@ -135,9 +138,9 @@ def show_home(username):
     return render_template('/users/home.html', top=random_posts)
 
 
-@app.route('/users/<username>/profile', methods=['GET', 'POST'])
+@app.route('/users/<username>/settings', methods=['GET', 'POST'])
 def users_profile(username):
-    '''Display user's profile and allow to update/delete account.'''
+    '''Display user's settings and allow to update/delete account.'''
 
     # only logged in user can view
     if 'username' not in session or username != session['username']:
@@ -146,18 +149,42 @@ def users_profile(username):
     # get user info
     user = User.query.filter_by(username=username).first()
 
-    form = UserForm(obj=user)
+    # get forms' details
+    email_form = UpdateEmailForm(obj=user)
+    pswd_form = UpdatePasswordForm()
 
-    if form.validate_on_submit():
-        user.username = form.username.data
-        user.email = form.email.data
+    # update email form
+    if email_form.validate_on_submit():
+        user.email = email_form.email.data
+        password = email_form.password.data
 
-        # commit new data to db
-        db.session.commit()
+        # authenticate user in order to update email
+        if email_form.submit1.data and user.authenticate(username, password):
+            # commit new data to db
+            db.session.commit()
 
-        return redirect(f'/users/{username}')
+            return redirect(f'/users/{username}')
+        else:
+            email_form.password.errors = ['Invalid username/password']
+
+    # update password form
+    if pswd_form.submit2.data and pswd_form.validate_on_submit():
+        password = pswd_form.password.data
+
+        # authenticate user in order to update email
+        if user.authenticate(username, password):
+            user.password = update_pswd(pswd_form.new_pswd.data)
+
+            # commit new data to db
+            db.session.commit()
+
+            return redirect(f'/users/{username}')
+        else:
+            email_form.password.errors = ['Invalid password']
+
     
-    return render_template('/users/profile.html', form=form)
+    return render_template('/users/profile.html', user=user, form1=email_form, form2=pswd_form)
+
 
 @app.route('/users/delete', methods=["POST"])
 def delete_user():
@@ -179,7 +206,14 @@ def delete_user():
 
     return redirect('/')
 
+def update_pswd(password):
+    '''Update user password.'''
+    hashed = bcrypt.generate_password_hash(password)
 
+    # turn byte string into normal (unicode utf8) string
+    hashed_utf8 = hashed.decode('utf8')
+    
+    return hashed_utf8
 
 
 """

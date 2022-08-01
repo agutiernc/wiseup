@@ -3,41 +3,47 @@
 {% block content %}
 
 <div class="container">
-  <h3 class="my-4">Edit Feedback</h3>
+  <h3 class="my-4">User Settings</h3>
 
-  <div class="row w-25 mb-5">
+  <!-- Update Email Form -->
+  <div class="row w-25 mb-4">
     <form method="POST">
+      {{ form1.hidden_tag() }}
 
-      {{ form.hidden_tag() }}
-
-      {% for field in form
-          if field.widget.input_type != 'hidden' %}
-          
-          <p>
-            {{ field.label(class_='col-sm-2 col-form-label') }}
-            {{ field(class_='form-control') }}
-
-            {% for error in field.errors %}
-              {{ error }}
-            {% endfor %}
-          </p>
-
-      {% endfor %}
-
-      <button class="btn btn-primary ms-3" type="submit">Edit</button>
-
-      <!-- Delete user's account -->
-      <button 
-        type="submit" 
-        class="btn btn-danger ms-4"
-        formmethod="POST"
-        formaction="/users/delete"
-      >
-        Delete
-      </button>
-      
+      {{ form1.password.label }}
+      {{ form1.password(class_='form-control my-2') }}
+      {{ form1.email.label }}
+      {{ form1.email(class_='form-control my-2') }}
+      {{ form1.submit1(class_='btn btn-primary mt-3') }}
     </form>
   </div>
+
+  <!-- Update Password Form -->
+  <div class="row w-25 mb-4">
+    <form method="POST" enctype="multipart/form-data">
+      {{ form2.hidden_tag() }}
+
+      {{ form2.password.label }}
+      {{ form2.password(class_='form-control my-2') }}
+      {{ form2.new_pswd.label }}
+      {{ form2.new_pswd(class_='form-control my-2') }}
+      {{ form2.confirm.label }}
+      {{ form2.confirm(class_='form-control my-2') }}
+      {{ form2.submit2(class_='btn btn-primary mt-3') }}
+    </form>
+  </div>
+  
+
+  <!-- Delete user's account -->
+  <button 
+    type="submit" 
+    class="btn btn-danger mt-3"
+    formmethod="POST"
+    formaction="/users/delete"
+  >
+    Delete?
+  </button>
+  
 </div>
 
 {% endblock %}
