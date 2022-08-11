@@ -33,7 +33,8 @@ def get_data(data):
 
         post_info.append({ 
             'title': post['data']['title'],
-            'url': post['data']['url']
+            'url': post['data']['url'],
+            'id': post['data']['id']
         })
     
     return post_info
@@ -46,7 +47,7 @@ def main_page():
     return redirect('/register')
 
 ##############################################################################
-# User routes
+# User signup/login/logout routes
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_user():
@@ -121,7 +122,7 @@ def logout_user():
 
 
 ##############################################################################
-# User's home page that displays TILs and Joke
+# User's home page and account settings routes
 
 @app.route('/users/<username>')
 def show_home(username):

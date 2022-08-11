@@ -4,14 +4,32 @@
 
 <h1>Topics</h1>
 
-<ul>
+<!-- ids or classes that have data.id is for expanding accordion one at a time -->
+<div class="accordion" id="accordionExample">
   {% for data in top %}
-    <li>
-      <a href="{{ data.url }}">{{ data.title }}</a>
-    </li>
+  <div class="accordion-item">
+
+    <h2 class="accordion-header" id="heading-{{ data.id }}">
+      <!-- save post button - use css to add button next to post -->
+      <button class="btn btn-sm btn-primary" style="display: inline;">
+        <i class='fa fa-star'></i>
+      </button>
+
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{data.id}}" aria-expanded="false" aria-controls="collapse-{{data.id}}">
+        <a href="{{ data.url }}">{{ data.title }}</a>
+      </button>
+    </h2>
+
+    <div id="collapse-{{data.id}}" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+      </div>
+    </div>
+  </div>
+
 
   {% endfor %}
-</ul>
+</div>
 
 <a href="/logout">Logout?</a>
 
