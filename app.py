@@ -2,7 +2,7 @@ from flask import Flask, redirect, render_template, session
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_bcrypt import Bcrypt
 from sqlalchemy.exc import IntegrityError
-from models import connect_db, db, User
+from models import connect_db, db, User, Favorites
 from forms import UserForm, LoginForm, UpdateEmailForm, UpdatePasswordForm
 from reddit_api import res_new, res_top, res_joke
 import random
@@ -32,7 +32,7 @@ def get_data(data):
         # print(post['data']['url'])
 
         post_info.append({ 
-            'title': post['data']['title'],
+            'title': filter_title(post['data']['title']),
             'url': post['data']['url'],
             'id': post['data']['id']
         })
@@ -40,11 +40,25 @@ def get_data(data):
     return post_info
 
 
+def filter_title(title):
+    '''Remove common words at the start of a title.'''
+
+    words = ['today i learned', 'that', 'about', '-', 'of']
+    new_title = title.split(' ', 1)[1].split() # remove 'TIL' from string
+
+    # if title contains any word in words, strip it
+    if new_title[0] in words:
+        new_title.pop(0)
+
+    return ' '.join(new_title).capitalize()
+
+
 @app.route('/')
 def main_page():
     '''Main page w/links to login or user registration.'''
 
     return redirect('/register')
+
 
 ##############################################################################
 # User signup/login/logout routes
@@ -122,7 +136,7 @@ def logout_user():
 
 
 ##############################################################################
-# User's home page and account settings routes
+# User's home page, favorites, and account settings routes
 
 @app.route('/users/<username>')
 def show_home(username):
@@ -137,6 +151,33 @@ def show_home(username):
     random_posts = random.sample(top_posts, 5)
 
     return render_template('/users/home.html', top=random_posts)
+
+
+@app.route('/users/<username>/save/<int:fav_id>', methods=['POST'])
+def add_favs(username):
+    '''Let current user save a post.'''
+
+    # get user INFO
+    # get all saved posts and then RENDER favs page
+
+    # only logged in user can view
+    if 'username' not in session or username != session['username']:
+        return redirect('/login')
+
+    # get user info
+    user = User.query.filter_by(username=username).first()
+
+    # fav_post = 
+
+    # return render_template('/users/favs.html', user=user)
+    return redirect('/users/{username}/saved')
+
+
+@app.route('/users/<username>/saved')
+def show_saved(username):
+    '''Display user's saved posts.'''
+
+    return render_template('favs.html')
 
 
 @app.route('/users/<username>/settings', methods=['GET', 'POST'])
