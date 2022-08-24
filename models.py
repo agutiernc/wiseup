@@ -23,6 +23,8 @@ class User(db.Model):
 
     email = db.Column(db.String(50), nullable=False, unique=True)
 
+    favorites = db.relationship('Favorites', cascade='all, delete')
+
     @classmethod
     def register(cls, username, password, email):
         '''Register user with hashed password and return user.'''
@@ -57,9 +59,15 @@ class Favorites(db.Model):
 
     __tablename__= 'favorites'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'))
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete='cascade'),
+        nullable=False
+    )
+
+    reddit_id = db.Column(db.Text, nullable=False)
 
     type = db.Column(db.String(4), nullable=False)
 
@@ -70,6 +78,8 @@ class Favorites(db.Model):
     text = db.Column(db.Text)
 
     comments = db.Column(db.ARRAY(db.Text()))
+
+    # user = db.relationship('User')
 
 
 # You can easily find records:

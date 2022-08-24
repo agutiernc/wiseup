@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, session
+from flask import Flask, redirect, render_template, session, request
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_bcrypt import Bcrypt
 from sqlalchemy.exc import IntegrityError
@@ -46,7 +46,7 @@ def filter_title(title):
     words = ['today i learned', 'that', 'about', '-', 'of']
     new_title = title.split(' ', 1)[1].split() # remove 'TIL' from string
 
-    # if title contains any word in words, strip it
+    # if title contains any word in words, remove it
     if new_title[0] in words:
         new_title.pop(0)
 
@@ -145,39 +145,17 @@ def show_home(username):
     # only logged in user can view
     if 'username' not in session or username != session['username']:
         return redirect('/login')
+    
+    # get user info
+    user = User.query.filter_by(username=username).first()
+
+    print('===== FAVORITES ====> ', user.favorites)
 
     top_posts = get_data(res_top)
 
     random_posts = random.sample(top_posts, 5)
 
-    return render_template('/users/home.html', top=random_posts)
-
-
-@app.route('/users/<username>/save/<int:fav_id>', methods=['POST'])
-def add_favs(username):
-    '''Let current user save a post.'''
-
-    # get user INFO
-    # get all saved posts and then RENDER favs page
-
-    # only logged in user can view
-    if 'username' not in session or username != session['username']:
-        return redirect('/login')
-
-    # get user info
-    user = User.query.filter_by(username=username).first()
-
-    # fav_post = 
-
-    # return render_template('/users/favs.html', user=user)
-    return redirect('/users/{username}/saved')
-
-
-@app.route('/users/<username>/saved')
-def show_saved(username):
-    '''Display user's saved posts.'''
-
-    return render_template('favs.html')
+    return render_template('/users/home.html', user=user, top=random_posts)
 
 
 @app.route('/users/<username>/settings', methods=['GET', 'POST'])
@@ -227,6 +205,49 @@ def users_profile(username):
     
     return render_template('/users/profile.html', user=user, form1=email_form, form2=pswd_form)
 
+@app.route('/users/<username>/save', methods=['POST'])
+def add_favs(username):
+    '''Let current user save/unsave a post.'''
+
+    # get user INFO
+    # get all saved posts and then RENDER favs page
+
+    # only logged in user can view
+    if 'username' not in session or username != session['username']:
+        return redirect('/login')
+
+    # get user info
+    user = User.query.filter_by(username=username).first()
+
+    title = request.json['title']
+    url = request.json['url']
+    reddit_id = request.json['id']
+
+    # if reddit_id in user.favorites:
+    #     print('IT WORKS!!!')
+    # else:
+    #     print('MAKE IT WORK!!!!!')
+
+    saved_post = Favorites(
+        user_id = user.id,
+        reddit_id = reddit_id,
+        type = 'til',
+        title = title,
+        url = url,
+    )
+
+    db.session.add(saved_post)
+    db.session.commit()
+
+    return redirect('/users/{username}')
+
+
+@app.route('/users/<username>/saved')
+def show_saved(username):
+    '''Display user's saved posts.'''
+
+    return render_template('favs.html')
+    
 
 @app.route('/users/delete', methods=["POST"])
 def delete_user():
