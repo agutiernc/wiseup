@@ -149,8 +149,6 @@ def show_home(username):
     # get user info
     user = User.query.filter_by(username=username).first()
 
-    print('===== FAVORITES ====> ', user.favorites)
-
     top_posts = get_data(res_top)
 
     random_posts = random.sample(top_posts, 5)
@@ -205,12 +203,10 @@ def users_profile(username):
     
     return render_template('/users/profile.html', user=user, form1=email_form, form2=pswd_form)
 
+
 @app.route('/users/<username>/save', methods=['POST'])
 def add_favs(username):
     '''Let current user save/unsave a post.'''
-
-    # get user INFO
-    # get all saved posts and then RENDER favs page
 
     # only logged in user can view
     if 'username' not in session or username != session['username']:
@@ -218,26 +214,32 @@ def add_favs(username):
 
     # get user info
     user = User.query.filter_by(username=username).first()
-
+    
+    # get json data from axios
     title = request.json['title']
     url = request.json['url']
     reddit_id = request.json['id']
 
-    # if reddit_id in user.favorites:
-    #     print('IT WORKS!!!')
-    # else:
-    #     print('MAKE IT WORK!!!!!')
+    # check if reddit id exists in user's saved posts
+    find_val = Favorites.query.filter((Favorites.reddit_id == reddit_id) & (Favorites.user_id == user.id))
 
-    saved_post = Favorites(
-        user_id = user.id,
-        reddit_id = reddit_id,
-        type = 'til',
-        title = title,
-        url = url,
-    )
+    if db.session.query(find_val.exists()).scalar():
+        # remove saved posts if it already exists in Favorites
+        db.session.delete(find_val.first())
+        db.session.commit()
 
-    db.session.add(saved_post)
-    db.session.commit()
+    else:
+        saved_post = Favorites(
+            user_id = user.id,
+            reddit_id = reddit_id,
+            type = 'til',
+            title = title,
+            url = url,
+        )
+        
+        # save and commit to db
+        db.session.add(saved_post)
+        db.session.commit()
 
     return redirect('/users/{username}')
 
