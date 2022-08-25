@@ -248,7 +248,13 @@ def add_favs(username):
 def show_saved(username):
     '''Display user's saved posts.'''
 
-    return render_template('favs.html')
+    # get user info
+    user = User.query.filter_by(username=username).first()
+
+    # get all of user's saved posts
+    favs = user.favorites
+
+    return render_template('/users/favs.html', user=user, favs=favs)
     
 
 @app.route('/users/delete', methods=["POST"])
