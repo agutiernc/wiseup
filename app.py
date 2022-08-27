@@ -57,7 +57,7 @@ def filter_title(title):
 def main_page():
     '''Main page w/links to login or user registration.'''
 
-    return redirect('/register')
+    return render_template('/index.html')
 
 
 ##############################################################################
@@ -96,7 +96,7 @@ def register_user():
         # add user to session when registered
         session['username'] = new_user.username
 
-        return render_template('secret.html')
+        return redirect('/login')
     else:
         return render_template('/users/register.html', form=form)
 
