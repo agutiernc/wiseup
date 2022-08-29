@@ -2,36 +2,58 @@
 
 {% block content %}
 
-<div class="my-5">
-  <h2>Login User</h2>
+<div class="container mt-5 w-100 ms-5">
+  <div class="row align-items-center ms-4">
+    <!-- image goes here -->
+    <div class="col-sm-4 mx-5">
+      <img 
+        src="/static/images/desk.png"
+        alt="Person sitting at computer desk"
+        class="float-end"
+      >
+    </div>
 
-  <p class="lead">
-    Login Below. Don't have an account?
-    <a href="/register" class="text-decoration-none">
-      Register here
-    </a>
-  </p>
+    <div class="col ps-2 ms-4">
+      <div class="my-5">
+        <h2>Login User</h2>
+    
+        <p class="lead">
+          Login Below. Don't have an account? <br>
+          <a href="/register" class="text-decoration-none">
+          Register here
+          </a>
+        </p>
+      </div>
+
+      <div class="ps-1 w-100 form-div">
+        <!-- login form -->
+        <form method="POST">
+          <div class="row mb-2 w-75">
+            {{ form.hidden_tag() }}
+
+            {% for field in form
+                if field.widget.input_type != 'hidden' %}
+              <p>
+                {{ field.label }}
+                {{ field(class_="form-control w-50") }}
+
+                {% for error in field.errors %}
+                    {{ error }}
+                {% endfor %}
+            </p>
+            {% endfor %}
+          </div>
+
+          <button class="btn btn-success" type="submit">Login</button>
+
+        </form>
+      </div>
+
+
+    </div>
+  </div>
 </div>
 
-<form method="POST">
-  <div class="row mb-2 w-25">
-    {{ form.hidden_tag() }}
 
-    {% for field in form
-        if field.widget.input_type != 'hidden' %}
-          <p>
-            {{ field.label }}
-            {{ field(class_="form-control") }}
-
-            {% for error in field.errors %}
-              {{ error }}
-            {% endfor %}
-          </p>
-    {% endfor %}
-  </div>
-
-  <button class="btn btn-success" type="submit">Login</button>
-
-</form>
 
 {% endblock %}
