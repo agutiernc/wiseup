@@ -19,7 +19,12 @@ class UserForm(FlaskForm):
                     EqualTo('confirm', message='Passwords must match'),
                     Regexp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d\w\W]{6,}$',
                             message='Password requirements invalid')
-                ])
+                ],
+                render_kw={
+                    'data-bs-toggle': 'tooltip',
+                    'title': 'Minumum of 6 characters, an uppercase letter, a number, and a special character required'
+                    
+                    })
 
     confirm = PasswordField('Repeat Password', validators=[InputRequired()])
 
@@ -65,7 +70,12 @@ class UpdatePasswordForm(FlaskForm):
                     EqualTo('confirm', message='Passwords must match'),
                     Regexp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d\w\W]{6,}$',
                             message='Password requirements invalid')
-                ])
+                ],
+                render_kw={
+                    'data-bs-toggle': 'tooltip',
+                    'title': 'Minumum of 6 characters, an uppercase letter, a number, and a special character required'
+                    
+                })
     
     confirm = PasswordField('Confirm Password', validators=[InputRequired()])
 
