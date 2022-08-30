@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, session, request
+from flask import Flask, redirect, render_template, session, request, g
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_bcrypt import Bcrypt
 from sqlalchemy.exc import IntegrityError
@@ -6,6 +6,8 @@ from models import connect_db, db, User, Favorites
 from forms import UserForm, LoginForm, UpdateEmailForm, UpdatePasswordForm
 from reddit_api import res_new, res_top, res_joke
 import random
+
+CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
 
@@ -21,6 +23,10 @@ debug = DebugToolbarExtension(app)
 connect_db(app)
 
 bcrypt = Bcrypt()
+
+
+###########################################################################
+# get api data
 
 def get_data(data):
     '''Retrieve JSON data.'''
@@ -57,13 +63,38 @@ def filter_title(title):
 def main_page():
     '''Main page w/links to login or user registration.'''
 
-    return render_template('/index.html')
+    if not g.user:
+        return render_template('/index.html')
+    
+    return redirect(f'/users/{ g.user.username }')
 
 
 ##############################################################################
 # User signup/login/logout routes
 
-@app.route('/register', methods=['GET', 'POST'])
+@app.before_request
+def add_user_to_g():
+    """If we're logged in, add curr user to Flask global."""
+    if CURR_USER_KEY in session:
+        g.user = User.query.get(session[CURR_USER_KEY])
+    else:
+        g.user = None
+
+
+def do_login(user):
+    '''Login user.'''
+
+    session[CURR_USER_KEY] = user.id
+
+
+def do_logout():
+    '''Logout user.'''
+
+    if CURR_USER_KEY in session:
+        del session[CURR_USER_KEY]
+
+
+@app.route('/register/', methods=['GET', 'POST'])
 def register_user():
     ''' Display and process new user registration form.
     
@@ -79,7 +110,7 @@ def register_user():
         username = form.username.data
         password = form.password.data
         email = form.email.data
-
+        print('==== PASSWORD ===> ', password)
         new_user = User.register(username, password, email)
 
         # add user to db
@@ -94,14 +125,16 @@ def register_user():
             return render_template('/users/register.html', form=form)
         
         # add user to session when registered
-        session['username'] = new_user.username
+        #session['username'] = new_user.username
+
+        do_login(new_user)
 
         return redirect('/login')
     else:
         return render_template('/users/register.html', form=form)
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login/', methods=['GET', 'POST'])
 def login():
     ''' Handle user login and add to session.
         
@@ -116,7 +149,9 @@ def login():
 
         if user:
             # add user to session when logged in
-            session['username'] = user.username
+            #session['username'] = user.username
+
+            do_login(user)
 
             return redirect(f'/users/{user.username}')
         else:
@@ -130,7 +165,9 @@ def login():
 def logout_user():
     '''Logout user and remove from session.'''
 
-    session.pop('username')
+    # session.pop('username')
+
+    do_logout()
 
     return redirect('/')
 
@@ -138,12 +175,15 @@ def logout_user():
 ##############################################################################
 # User's home page, favorites, and account settings routes
 
-@app.route('/users/<username>')
+
+@app.route('/users/<username>/')
 def show_home(username):
     '''Display user's feed.'''
 
     # only logged in user can view
-    if 'username' not in session or username != session['username']:
+    # if 'username' not in session or username != session['username']:
+    #     return redirect('/login')
+    if not g.user:
         return redirect('/login')
     
     # get user info
@@ -156,12 +196,14 @@ def show_home(username):
     return render_template('/users/home.html', user=user, top=random_posts)
 
 
-@app.route('/users/<username>/settings', methods=['GET', 'POST'])
+@app.route('/users/<username>/settings/', methods=['GET', 'POST'])
 def users_profile(username):
     '''Display user's settings and allow to update/delete account.'''
 
     # only logged in user can view
-    if 'username' not in session or username != session['username']:
+    # if 'username' not in session or username != session['username']:
+    #     return redirect('/login')
+    if not g.user:
         return redirect('/login')
 
     # get user info
@@ -209,7 +251,9 @@ def add_favs(username):
     '''Let current user save/unsave a post.'''
 
     # only logged in user can view
-    if 'username' not in session or username != session['username']:
+    # if 'username' not in session or username != session['username']:
+    #     return redirect('/login')
+    if not g.user:
         return redirect('/login')
 
     # get user info
@@ -244,9 +288,15 @@ def add_favs(username):
     return redirect('/users/{username}')
 
 
-@app.route('/users/<username>/saved')
+@app.route('/users/<username>/saved/')
 def show_saved(username):
     '''Display user's saved posts.'''
+
+    # only logged in user can view
+    # if 'username' not in session or username != session['username']:
+    #     return redirect('/login')
+    if not g.user:
+        return redirect('/login')
 
     # get user info
     user = User.query.filter_by(username=username).first()
@@ -265,15 +315,17 @@ def delete_user():
     user = User.query.filter_by(username=session['username']).first()
 
     # only current user can delete their own account
-    if 'username' not in session or user.username != session['username']:
+    # if 'username' not in session or user.username != session['username']:
+    #     return redirect('/login')
+    if not g.user:
         return redirect('/login')
     
     # delete user from db
-    db.session.delete(user)
+    db.session.delete(g.user)
     db.session.commit()
 
     # remove user from session
-    session.pop('username')
+    # session.pop('username')
 
     return redirect('/')
 
