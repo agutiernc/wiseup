@@ -1,3 +1,5 @@
 **/__pycache__
 **/venv
 secrets.py
+/templates/users/favs2.html
+/templates/secret.html

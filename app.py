@@ -189,11 +189,14 @@ def show_home(username):
     # get user info
     user = User.query.filter_by(username=username).first()
 
+    # get all of user's saved posts
+    favs = user.favorites
+
     top_posts = get_data(res_top)
 
     random_posts = random.sample(top_posts, 5)
 
-    return render_template('/users/home.html', user=user, top=random_posts)
+    return render_template('/users/home.html', user=user, favs=favs, top=random_posts)
 
 
 @app.route('/users/<username>/settings/', methods=['GET', 'POST'])
@@ -288,23 +291,23 @@ def add_favs(username):
     return redirect('/users/{username}')
 
 
-@app.route('/users/<username>/saved/')
-def show_saved(username):
-    '''Display user's saved posts.'''
+# @app.route('/users/<username>/saved/')
+# def show_saved(username):
+#     '''Display user's saved posts.'''
 
-    # only logged in user can view
-    # if 'username' not in session or username != session['username']:
-    #     return redirect('/login')
-    if not g.user:
-        return redirect('/login')
+#     # only logged in user can view
+#     # if 'username' not in session or username != session['username']:
+#     #     return redirect('/login')
+#     if not g.user:
+#         return redirect('/login')
 
-    # get user info
-    user = User.query.filter_by(username=username).first()
+#     # get user info
+#     user = User.query.filter_by(username=username).first()
 
-    # get all of user's saved posts
-    favs = user.favorites
+#     # get all of user's saved posts
+#     favs = user.favorites
 
-    return render_template('/users/favs.html', user=user, favs=favs)
+#     return render_template('/users/favs.html', user=user, favs=favs)
     
 
 @app.route('/users/delete', methods=["POST"])
