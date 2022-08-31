@@ -5,45 +5,88 @@
 <div class="container">
   <h3 class="my-4">User Settings</h3>
 
-  <!-- Update Email Form -->
-  <div class="row w-25 mb-4">
-    <form method="POST">
-      {{ form1.hidden_tag() }}
+  <!-- inner nav-tabs -->
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="email-tab" data-bs-toggle="tab" data-bs-target="#email-tab-pane" type="button" role="tab" aria-controls="email-tab-pane" aria-selected="true">E-mail</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#password-tab-pane" type="button" role="tab" aria-controls="password-tab-pane" aria-selected="false">Password</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="account-tab" data-bs-toggle="tab" data-bs-target="#account-tab-pane" type="button" role="tab" aria-controls="account-tab-pane" aria-selected="false">Account</button>
+    </li>
+  </ul>
 
-      {{ form1.password.label }}
-      {{ form1.password(class_='form-control my-2') }}
-      {{ form1.email.label }}
-      {{ form1.email(class_='form-control my-2') }}
-      {{ form1.submit1(class_='btn btn-primary mt-3') }}
-    </form>
+  <!-- inner nav-tabs content -->
+  <div class="tab-content" id="myTabContent">
+    <!-- first nav-tab -->
+    <div class="tab-pane fade show active mt-4" id="email-tab-pane" role="tabpanel" aria-labelledby="email-tab" tabindex="0">
+      <!-- Update Email Form -->
+      <div class="card w-50">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Update E-mail</h5>
+
+          <div class="row w-50 mb-4">
+            <form method="POST">
+              {{ form1.hidden_tag() }}
+    
+              {{ form1.password.label }}
+              {{ form1.password(class_='form-control my-2') }}
+              {{ form1.email.label }}
+              {{ form1.email(class_='form-control my-2') }}
+              {{ form1.submit1(class_='btn btn-primary mt-3') }}
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- second nav-tab -->
+    <div class="tab-pane fade mt-4" id="password-tab-pane" role="tabpanel" aria-labelledby="password-tab" tabindex="0">
+      <!-- Update Password Form -->
+      <div class="card w-50">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Update Password</h5>
+          
+          <div class="row w-50 mb-4">
+            <form method="POST" enctype="multipart/form-data">
+              {{ form2.hidden_tag() }}
+    
+              {{ form2.password.label }}
+              {{ form2.password(class_='form-control my-2') }}
+              {{ form2.new_pswd.label }}
+              {{ form2.new_pswd(class_='form-control my-2') }}
+              {{ form2.confirm.label }}
+              {{ form2.confirm(class_='form-control my-2') }}
+              {{ form2.submit2(class_='btn btn-primary mt-3') }}
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- third nav-tab -->
+    <div class="tab-pane fade mt-4" id="account-tab-pane" role="tabpanel" aria-labelledby="account-tab" tabindex="0">
+      <div class="card w-50">
+        <div class="card-body">
+          <h5 class="card-title">We're sorry to see you go</h5>
+
+          <p class="card-text">
+            Once you delete your account, your username, info, and saved content are permanently removed 
+            from <strong>WiseUp</strong>
+          </p>
+          
+          <button type="submit" class="btn btn-danger mt-3" formmethod="POST" formaction="/users/delete">
+            Delete account?
+          </button>
+
+        </div>
+      </div>
+
+    </div>
   </div>
-
-  <!-- Update Password Form -->
-  <div class="row w-25 mb-4">
-    <form method="POST" enctype="multipart/form-data">
-      {{ form2.hidden_tag() }}
-
-      {{ form2.password.label }}
-      {{ form2.password(class_='form-control my-2') }}
-      {{ form2.new_pswd.label }}
-      {{ form2.new_pswd(class_='form-control my-2') }}
-      {{ form2.confirm.label }}
-      {{ form2.confirm(class_='form-control my-2') }}
-      {{ form2.submit2(class_='btn btn-primary mt-3') }}
-    </form>
-  </div>
-  
-
-  <!-- Delete user's account -->
-  <button 
-    type="submit" 
-    class="btn btn-danger mt-3"
-    formmethod="POST"
-    formaction="/users/delete"
-  >
-    Delete?
-  </button>
-  
 </div>
 
 {% endblock %}
