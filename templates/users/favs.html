@@ -1,7 +1,7 @@
 {% block content %}
 
 <!-- ids or classes that have data.id is for expanding accordion one at a time -->
-<div class="accordion mt-4" id="accordionExample">
+<div class="accordion mt-4 reload" id="accordionFavs">
   {% for data in favs %}
     <div class="accordion-item">
 
@@ -9,7 +9,7 @@
         <div class="d-flex">
           <div class="mt-2 ms-2">
             <!-- save post button - use css to add button next to post -->
-            <form action="/users/{{ user.username }}/save" method="POST">
+            <form action="/users/{{ g.user.username }}/save" method="POST">
               <button
                 type="button"
                 class="btn btn-sm btn-primary save-btn"
@@ -34,7 +34,7 @@
         </div>
       </h2>
 
-      <div id="collapse-{{data.id}}" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+      <div id="collapse-{{data.id}}" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionFavs">
         <div class="accordion-body">
           <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
         </div>
@@ -44,8 +44,5 @@
 
   {% endfor %}
 </div>
-
-
-
 
 {% endblock %}

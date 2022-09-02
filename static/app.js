@@ -15,7 +15,7 @@ async function savePost(e) {
   
   await axios({
     method: 'post',
-    url: `/users/${username}/save`,
+    url: `/users/${username}/save/`,
     data: {
       title,
       url,
@@ -23,8 +23,11 @@ async function savePost(e) {
       id: redditID
     }
   })
-}
 
+  // refreshes favorites content
+  $("#accordionFavs").load(" #accordionFavs > *");
+
+}
 
 // for bootstrap tooltips
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')

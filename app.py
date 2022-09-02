@@ -187,7 +187,7 @@ def show_home(username):
         return redirect('/login')
     
     # get user info
-    user = User.query.filter_by(username=username).first()
+    user = User.query.filter_by(username=g.user.username).first()
 
     # get all of user's saved posts
     favs = user.favorites
@@ -249,7 +249,7 @@ def users_profile(username):
     return render_template('/users/profile.html', user=user, form1=email_form, form2=pswd_form)
 
 
-@app.route('/users/<username>/save', methods=['POST'])
+@app.route('/users/<username>/save/', methods=['POST'])
 def add_favs(username):
     '''Let current user save/unsave a post.'''
 
@@ -260,7 +260,7 @@ def add_favs(username):
         return redirect('/login')
 
     # get user info
-    user = User.query.filter_by(username=username).first()
+    user = User.query.filter_by(username=g.user.username).first()
     
     # get json data from axios
     title = request.json['title']
