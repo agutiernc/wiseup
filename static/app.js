@@ -1,6 +1,6 @@
 $(document).on('click', '.save-btn', savePost)
 
-
+// allow user to save/unsave a post
 async function savePost(e) {
   e.stopPropagation()
 
@@ -25,6 +25,9 @@ async function savePost(e) {
     }
   })
 
+  // removes focus highlighting on button
+  $(this).blur()
+
   // toggle star icon
   $(this).find('i').toggleClass('fa-regular fa-solid')
   
@@ -32,17 +35,11 @@ async function savePost(e) {
   findMatchingID(redditID)
 }
 
-// removes focus highlighting on buttons
-$('.btn').mouseup(function () {
-  this.blur()
-})
-
-
 // refresh favs tab on click
 $('#favs-tab').click(function(e) {
   e.stopPropagation()
+
   $("#accordionFavs").load(" #accordionFavs > *");
-  console.log('testing this')
 })
 
 
@@ -50,7 +47,7 @@ $('#favs-tab').click(function(e) {
 function findMatchingID(id) {
   const starBtn = $(".accordion-header").not(this).find(`[data-id='${id}']`).find('i')
 
-  if (!starBtn) return;
+  if (!starBtn) return; // quit if undefined
 
   if (starBtn.length === 2) {
     starBtn.eq(0).toggleClass('fa-regular fa-solid')
