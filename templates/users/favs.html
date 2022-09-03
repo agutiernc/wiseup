@@ -19,7 +19,7 @@
                 data-user="{{ user.username }}"
                 data-id="{{ data.reddit_id }}"
               >
-                <i class="{{ 'fa-solid fa-star' if data.reddit_id in user.favorites|map(attribute='reddit_id') else 'fa-regular fa-star'}}"></i>
+                <i class="{{ 'fa-solid fa-star' if data.reddit_id in user.favorites|map(attribute='reddit_id') else 'fa-regular fa-star'}} star"></i>
               </button>
             </form>
           </div>
