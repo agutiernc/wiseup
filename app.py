@@ -4,7 +4,7 @@ from flask_bcrypt import Bcrypt
 from sqlalchemy.exc import IntegrityError
 from models import connect_db, db, User, Favorites
 from forms import UserForm, LoginForm, UpdateEmailForm, UpdatePasswordForm
-from reddit_api import res_new, res_top, res_joke
+from reddit_api import res_top, res_joke
 import random
 
 CURR_USER_KEY = "curr_user"
@@ -34,22 +34,20 @@ def get_data(data):
     post_info = []
 
     for post in data.json()['data']['children']:
-        # print(post['data']['title'])
-        # print(post['data']['url'])
-
         post_info.append({ 
             'title': filter_title(post['data']['title']),
             'url': post['data']['url'],
-            'id': post['data']['id']
+            'id': post['data']['id'],
+            'selftext': post['data']['selftext'] if data == res_joke else None
         })
     
     return post_info
 
 
 def filter_title(title):
-    '''Remove common words at the start of a title.'''
+    '''Remove common words/characters at the start of a title.'''
 
-    words = ['today i learned', 'that', 'about', '-', 'of']
+    words = ['today i learned', 'that', 'about', '-', 'of', ':']
     new_title = title.split(' ', 1)[1].split() # remove 'TIL' from string
 
     # if title contains any word in words, remove it
@@ -100,7 +98,7 @@ def register_user():
     
         If form not valid, present form. Otherwise, redirect to main page.
 
-        If the there already is a user with that username: flash message
+        If there already is a user with that username: flash message
         and redirect to form.
     '''
 
@@ -110,7 +108,6 @@ def register_user():
         username = form.username.data
         password = form.password.data
         email = form.email.data
-        print('==== PASSWORD ===> ', password)
         new_user = User.register(username, password, email)
 
         # add user to db
@@ -123,9 +120,6 @@ def register_user():
             form.username.errors.append('Username taken. Please pick another.')
 
             return render_template('/users/register.html', form=form)
-        
-        # add user to session when registered
-        #session['username'] = new_user.username
 
         do_login(new_user)
 
@@ -148,9 +142,6 @@ def login():
         user = User.authenticate(form.username.data, form.password.data)
 
         if user:
-            # add user to session when logged in
-            #session['username'] = user.username
-
             do_login(user)
 
             return redirect(f'/users/{user.username}')
@@ -160,12 +151,9 @@ def login():
     return render_template('/users/login.html', form=form)
 
 
-
 @app.route('/logout')
 def logout_user():
     '''Logout user and remove from session.'''
-
-    # session.pop('username')
 
     do_logout()
 
@@ -194,18 +182,17 @@ def show_home(username):
 
     top_posts = get_data(res_top)
 
+    jokes = get_data(res_joke)
+
     random_posts = random.sample(top_posts, 5)
 
-    return render_template('/users/home.html', user=user, favs=favs, top=random_posts)
+    return render_template('/users/home.html', jokes=jokes, user=user, favs=favs, top=random_posts)
 
 
 @app.route('/users/<username>/settings/', methods=['GET', 'POST'])
 def users_profile(username):
     '''Display user's settings and allow to update/delete account.'''
 
-    # only logged in user can view
-    # if 'username' not in session or username != session['username']:
-    #     return redirect('/login')
     if not g.user:
         return redirect('/login')
 
@@ -244,7 +231,6 @@ def users_profile(username):
             return redirect(f'/users/{username}')
         else:
             email_form.password.errors = ['Invalid password']
-
     
     return render_template('/users/profile.html', user=user, form1=email_form, form2=pswd_form)
 
@@ -254,8 +240,6 @@ def add_favs(username):
     '''Let current user save/unsave a post.'''
 
     # only logged in user can view
-    # if 'username' not in session or username != session['username']:
-    #     return redirect('/login')
     if not g.user:
         return redirect('/login')
 
@@ -315,11 +299,9 @@ def delete_user():
     '''Delete user.'''
 
     # get user
-    user = User.query.filter_by(username=session['username']).first()
+    # user = User.query.filter_by(username=session['username']).first()
 
     # only current user can delete their own account
-    # if 'username' not in session or user.username != session['username']:
-    #     return redirect('/login')
     if not g.user:
         return redirect('/login')
     
@@ -327,10 +309,8 @@ def delete_user():
     db.session.delete(g.user)
     db.session.commit()
 
-    # remove user from session
-    # session.pop('username')
-
     return redirect('/')
+
 
 def update_pswd(password):
     '''Update user password.'''
@@ -346,8 +326,6 @@ def update_pswd(password):
     ToDos:
     add notifications
     style pages
-    maybe add a form for user profile instead of UserForm
-    organize data lists and add save icon
     get joke api working
         - joke is added to the top w/refresh button to get new joke
             - needs save icon too

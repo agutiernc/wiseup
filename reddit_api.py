@@ -26,7 +26,11 @@ if response.status_code == 200:
 OAUTH_ENDPOINT = 'https://oauth.reddit.com'
 
 params_get = {
-    'limit': 20
+    'limit': 10
+}
+
+params_get_jokes = {
+    'limit': 5
 }
 
 headers_get = {
@@ -35,17 +39,15 @@ headers_get = {
 }
 
 res_top = requests.get(OAUTH_ENDPOINT + '/r/TodayILearned/top', headers=headers_get, params=params_get)
-res_new = requests.get(OAUTH_ENDPOINT + '/r/TodayILearned/new', headers=headers_get, params=params_get)
 
 # test to see if it returns joke data
-res_joke = requests.get(OAUTH_ENDPOINT + '/r/Jokes/random', headers=headers_get, params=params_get)
+res_joke = requests.get(OAUTH_ENDPOINT + '/r/Jokes/top', headers=headers_get, params=params_get_jokes)
 
-# print(res_top)
-# print(response2.json())
 
 # for post in res_top.json()['data']['children']:
 #     print(post['data']['title'])
 #     print(post['data']['url'])
+#     print(post['data']['permalink'])
 
 
 # def get_data(data):
