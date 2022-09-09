@@ -2,7 +2,23 @@
 
 {% block content %}
 
-<h1 class="mt-5">Topics</h1>
+<!-- jokes goes here -->
+<p class="text-center mt-5">
+  <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseJoke" aria-expanded="false" aria-controls="collapseJoke">
+    <h6 class="text-center">Joke of the day</h6>
+    
+    {{ jokes[0].title }}
+  </button>
+</p>
+
+<div class="text-center d-flex justify-content-center align-items-center">
+  <div class="collapse mb-3" id="collapseJoke">
+    <div class="card card-body">
+      {{ jokes[0].selftext }}
+    </div>
+  </div>
+</div>
+
 
 <!-- inner nav-tabs -->
 <ul class="nav nav-tabs" id="myTab" role="tablist">

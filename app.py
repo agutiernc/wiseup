@@ -34,11 +34,14 @@ def get_data(data):
     post_info = []
 
     for post in data.json()['data']['children']:
+        title = filter_title(post['data']['title']) if data == res_top else post['data']['title']
+        self_text = post['data']['selftext'] if data == res_joke else None
+        
         post_info.append({ 
-            'title': filter_title(post['data']['title']),
+            'title': title,
             'url': post['data']['url'],
             'id': post['data']['id'],
-            'selftext': post['data']['selftext'] if data == res_joke else None
+            'selftext': self_text
         })
     
     return post_info
@@ -169,8 +172,6 @@ def show_home(username):
     '''Display user's feed.'''
 
     # only logged in user can view
-    # if 'username' not in session or username != session['username']:
-    #     return redirect('/login')
     if not g.user:
         return redirect('/login')
     
@@ -184,9 +185,13 @@ def show_home(username):
 
     jokes = get_data(res_joke)
 
+    print('=== JOKES ==> ', jokes)
+
     random_posts = random.sample(top_posts, 5)
 
-    return render_template('/users/home.html', jokes=jokes, user=user, favs=favs, top=random_posts)
+    random_joke = random.sample(jokes, 1)
+
+    return render_template('/users/home.html', jokes=random_joke, user=user, favs=favs, top=random_posts)
 
 
 @app.route('/users/<username>/settings/', methods=['GET', 'POST'])
