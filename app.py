@@ -38,8 +38,6 @@ def get_data(data):
         self_text = post['data']['selftext'] if data == res_joke else None
         comments = get_comments(post['data']['permalink']) if data == res_top else None
 
-        #print('==== COMMENTS ====> ', comments)
-
         post_info.append({ 
             'title': title,
             'url': post['data']['url'],
@@ -47,8 +45,6 @@ def get_data(data):
             'selftext': self_text,
             'comments': comments
         })
-    
-    print('=== POST INFO ====> ', post_info)
     
     return post_info
 
@@ -191,8 +187,6 @@ def show_home(username):
 
     jokes = get_data(res_joke)
 
-    # print('=== JOKES ==> ', jokes)
-
     random_posts = random.sample(top_posts, 5)
 
     random_joke = random.sample(jokes, 1)
@@ -261,6 +255,7 @@ def add_favs(username):
     title = request.json['title']
     url = request.json['url']
     reddit_id = request.json['id']
+    comments = request.json['comments']
 
     # check if reddit id exists in user's saved posts
     find_val = Favorites.query.filter((Favorites.reddit_id == reddit_id) & (Favorites.user_id == user.id))
@@ -277,6 +272,7 @@ def add_favs(username):
             type = 'til',
             title = title,
             url = url,
+            comments = comments
         )
         
         # save and commit to db
@@ -309,9 +305,6 @@ def add_favs(username):
 def delete_user():
     '''Delete user.'''
 
-    # get user
-    # user = User.query.filter_by(username=session['username']).first()
-
     # only current user can delete their own account
     if not g.user:
         return redirect('/login')
@@ -337,7 +330,5 @@ def update_pswd(password):
     ToDos:
     add notifications
     style pages
-    get joke api working
-        - joke is added to the top w/refresh button to get new joke
-            - needs save icon too
+
 """

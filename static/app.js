@@ -9,6 +9,7 @@ async function savePost(e) {
   const url = $(this).data('url')
   const username = $(this).data('user')
   const redditID = $(this).data('id')
+  const comments = $(this).data('comments')
   
   await axios({
     method: 'post',
@@ -17,7 +18,8 @@ async function savePost(e) {
       title,
       url,
       username,
-      id: redditID
+      id: redditID,
+      comments
     }
   })
 

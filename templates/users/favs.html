@@ -18,6 +18,7 @@
                 data-title="{{ data.title }}"
                 data-user="{{ user.username }}"
                 data-id="{{ data.reddit_id }}"
+                data-comments="{{ data.comments }}"
               >
                 <i class="{{ 'fa-solid fa-star' if data.reddit_id in user.favorites|map(attribute='reddit_id') else 'fa-regular fa-star'}}"></i>
               </button>
@@ -36,7 +37,7 @@
 
       <div id="collapse-{{data.id}}" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionFavs">
         <div class="accordion-body">
-          <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+          <p>{{ data.comments }}</p>
         </div>
       </div>
     </div>

@@ -67,7 +67,7 @@
       </div>
     </div>
 
-    <!-- third nav-tab -->
+    <!-- third nav-tab for deleting account -->
     <div class="tab-pane fade mt-4" id="account-tab-pane" role="tabpanel" aria-labelledby="account-tab" tabindex="0">
       <div class="card w-50">
         <div class="card-body">
@@ -77,10 +77,12 @@
             Once you delete your account, your username, info, and saved content are permanently removed 
             from <strong>WiseUp</strong>
           </p>
-          
-          <button type="submit" class="btn btn-danger mt-3" formmethod="POST" formaction="/users/delete">
-            Delete account?
-          </button>
+
+          <form action="/users/delete" method="POST">
+            <button type="submit" class="btn btn-danger mt-3">
+              Delete account?
+            </button>
+          </form>
 
         </div>
       </div>
