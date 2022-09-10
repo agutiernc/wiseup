@@ -40,14 +40,36 @@ headers_get = {
 
 res_top = requests.get(OAUTH_ENDPOINT + '/r/TodayILearned/top', headers=headers_get, params=params_get)
 
-# test to see if it returns joke data
+
 res_joke = requests.get(OAUTH_ENDPOINT + '/r/Jokes/top', headers=headers_get, params=params_get_jokes)
 
 
+def get_comments(post_url):
+    '''Get the top comment from a post.'''
+
+    result = []
+
+    params = {
+        "sort": "top",
+        "limit": 1,
+    }
+
+    res = requests.get(OAUTH_ENDPOINT + post_url, headers=headers_get, params=params)
+
+    # print('=== COMMENTS ===> ', res.json())
+
+    for post in res.json():
+        result.append(post['data']['children'][0]['data'].get('body'))
+    
+    # print('==== RESULT ===> ', result)
+
+    return result[1]
+
 # for post in res_top.json()['data']['children']:
-#     print(post['data']['title'])
-#     print(post['data']['url'])
-#     print(post['data']['permalink'])
+    # print(post['data']['title'])
+    # print(post['data']['url'])
+    # print(post['data']['permalink'])
+    # print('=== LOOK ====> ', post['data'])
 
 
 # def get_data(data):

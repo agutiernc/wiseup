@@ -4,7 +4,7 @@ from flask_bcrypt import Bcrypt
 from sqlalchemy.exc import IntegrityError
 from models import connect_db, db, User, Favorites
 from forms import UserForm, LoginForm, UpdateEmailForm, UpdatePasswordForm
-from reddit_api import res_top, res_joke
+from reddit_api import res_top, res_joke, get_comments
 import random
 
 CURR_USER_KEY = "curr_user"
@@ -36,13 +36,19 @@ def get_data(data):
     for post in data.json()['data']['children']:
         title = filter_title(post['data']['title']) if data == res_top else post['data']['title']
         self_text = post['data']['selftext'] if data == res_joke else None
-        
+        comments = get_comments(post['data']['permalink']) if data == res_top else None
+
+        #print('==== COMMENTS ====> ', comments)
+
         post_info.append({ 
             'title': title,
             'url': post['data']['url'],
             'id': post['data']['id'],
-            'selftext': self_text
+            'selftext': self_text,
+            'comments': comments
         })
+    
+    print('=== POST INFO ====> ', post_info)
     
     return post_info
 
@@ -185,7 +191,7 @@ def show_home(username):
 
     jokes = get_data(res_joke)
 
-    print('=== JOKES ==> ', jokes)
+    # print('=== JOKES ==> ', jokes)
 
     random_posts = random.sample(top_posts, 5)
 
