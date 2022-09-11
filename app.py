@@ -78,6 +78,7 @@ def main_page():
 @app.before_request
 def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
+    
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
     else:
@@ -289,25 +290,6 @@ def add_favs(username):
         db.session.commit()
 
     return redirect('/users/{username}')
-
-
-# @app.route('/users/<username>/saved/')
-# def show_saved(username):
-#     '''Display user's saved posts.'''
-
-#     # only logged in user can view
-#     # if 'username' not in session or username != session['username']:
-#     #     return redirect('/login')
-#     if not g.user:
-#         return redirect('/login')
-
-#     # get user info
-#     user = User.query.filter_by(username=username).first()
-
-#     # get all of user's saved posts
-#     favs = user.favorites
-
-#     return render_template('/users/favs.html', user=user, favs=favs)
     
 
 @app.route('/users/delete', methods=["POST"])
@@ -330,17 +312,10 @@ def delete_user():
 
 def update_pswd(password):
     '''Update user password.'''
+    
     hashed = bcrypt.generate_password_hash(password)
 
     # turn byte string into normal (unicode utf8) string
     hashed_utf8 = hashed.decode('utf8')
     
     return hashed_utf8
-
-
-"""
-    ToDos:
-    add notifications
-    style pages
-
-"""
