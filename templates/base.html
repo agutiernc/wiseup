@@ -64,6 +64,14 @@
   </nav>
 
   <div class="container">
+    <!-- flash messages -->
+    {% for msg in get_flashed_messages() %}
+      <div class="flash-msg alert alert-dark w-50 mx-auto mt-3 text-center" role="alert">
+        {{ msg }}
+      </div>
+    {% endfor %}
+
+
     {% block content %}
 
 

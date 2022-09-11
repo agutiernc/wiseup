@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, session, request, g
+from flask import Flask, redirect, render_template, session, request, g, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_bcrypt import Bcrypt
 from sqlalchemy.exc import IntegrityError
@@ -121,6 +121,9 @@ def register_user():
         try:
             # commit new user to db
             db.session.commit()
+
+            # confirm registration
+            flash('Thank you for registering. Please login')
         except IntegrityError:
             form.username.errors.append('Username taken. Please pick another.')
 
@@ -218,7 +221,10 @@ def users_profile(username):
             # commit new data to db
             db.session.commit()
 
-            return redirect(f'/users/{username}')
+            # confirm update
+            flash('E-mail has been updated')
+
+            return redirect(f'/users/{username}/settings/')
         else:
             email_form.password.errors = ['Invalid username/password']
 
@@ -233,7 +239,10 @@ def users_profile(username):
             # commit new data to db
             db.session.commit()
 
-            return redirect(f'/users/{username}')
+            # confirm update
+            flash('Password has been updated')
+
+            return redirect(f'/users/{username}/settings/')
         else:
             email_form.password.errors = ['Invalid password']
     
@@ -312,6 +321,9 @@ def delete_user():
     # delete user from db
     db.session.delete(g.user)
     db.session.commit()
+
+    # deletion confirmation
+    flash('Sorry to see you go. If you change your mind, please re-register.')
 
     return redirect('/')
 
