@@ -1,13 +1,14 @@
 from secrets import CLIENT_ID, CLIENT_SECRET, USERNAME, PASSWORD
 import requests
+import os
 
 # Authenticate reddit app
 client_auth = requests.auth.HTTPBasicAuth(CLIENT_ID, CLIENT_SECRET)
 
 post_data = {
     'grant_type': 'password',
-    'username': USERNAME,
-    'password': PASSWORD
+    'username': os.environ.get('REDDIT_USERNAME', USERNAME),
+    'password': os.environ.get('REDDIT_PASSWORD', PASSWORD)
 }
 
 headers = {

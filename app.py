@@ -5,17 +5,18 @@ from sqlalchemy.exc import IntegrityError
 from models import connect_db, db, User, Favorites
 from forms import UserForm, LoginForm, UpdateEmailForm, UpdatePasswordForm
 from reddit_api import res_top, res_joke, get_comments
-import random
+import random 
+import os
 
 CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///wiseup'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql:///wiseup')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 
-app.config['SECRET_KEY'] = 'thesecretishere'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'thesecretishere')
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 debug = DebugToolbarExtension(app)
