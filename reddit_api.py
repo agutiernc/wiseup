@@ -56,54 +56,7 @@ def get_comments(post_url):
 
     res = requests.get(OAUTH_ENDPOINT + post_url, headers=headers_get, params=params)
 
-    # print('=== COMMENTS ===> ', res.json())
-
     for post in res.json():
         result.append(post['data']['children'][0]['data'].get('body'))
-    
-    # print('==== RESULT ===> ', result)
 
     return result[1]
-
-# for post in res_top.json()['data']['children']:
-    # print(post['data']['title'])
-    # print(post['data']['url'])
-    # print(post['data']['permalink'])
-    # print('=== LOOK ====> ', post['data'])
-
-
-# def get_data(data):
-#     '''Retrieve JSON type.'''
-#     post_info = []
-
-#     for post in data.json()['data']['children']:
-#         # print(post['data']['title'])
-#         # print(post['data']['url'])
-
-#         post_info.append({ 
-#             'title': post['data']['title'],
-#             'url': post['data']['url']
-#         })
-    
-#     return post_info
-
-
-# print(get_data(res_top)[0])
-
-
-
-# ===========================================
-
-# look @ video - 11:00
-
-"""
-data that is needed:
-    title
-    url
-    comments  - (top 3)
-    selftext from jokes only
-"""
-
-
-# do for loop to extract data from specific keys
-# maybe make a function that handles that?

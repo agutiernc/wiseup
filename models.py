@@ -78,13 +78,3 @@ class Favorites(db.Model):
     text = db.Column(db.Text)
 
     comments = db.Column(db.Text)
-
-    # comments = db.Column(db.ARRAY(db.Text()))
-
-    # user = db.relationship('User')
-
-
-# You can easily find records:
-# Example.my_array.contains([1, 2, 3]).all()
-# You can use text items of array
-# db.Column(db.ARRAY(db.Text())
