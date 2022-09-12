@@ -1,6 +1,6 @@
 import requests
 import os
-from secrets import REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, USERNAME, PASSWORD
+from secret_words import REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, USERNAME, PASSWORD
 
 # Authenticate reddit app
 client_auth = requests.auth.HTTPBasicAuth(

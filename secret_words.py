@@ -1,0 +1,5 @@
+REDDIT_CLIENT_ID = 'Bzr-dbSxquonRUfoa3jj7w'
+REDDIT_CLIENT_SECRET = 'S08nD2MrOHATxBbTxj61Su2U4Em9Bg'
+
+USERNAME = 'missiontocode'
+PASSWORD = 'stB&2HvCnSi5RP'
