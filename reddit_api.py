@@ -3,7 +3,8 @@ import requests
 import os
 
 # Authenticate reddit app
-client_auth = requests.auth.HTTPBasicAuth(CLIENT_ID, CLIENT_SECRET)
+client_auth = requests.auth.HTTPBasicAuth(
+    os.environ.get('CLIENT_ID', CLIENT_ID), os.environ.get('CLIENT_SECRET', CLIENT_SECRET))
 
 post_data = {
     'grant_type': 'password',
