@@ -11,23 +11,23 @@ async function savePost(e) {
   const redditID = $(this).data('id')
   const comments = $(this).data('comments')
   
-  await axios({
-    method: 'post',
-    url: `/users/${username}/save/`,
-    data: {
-      title,
-      url,
-      username,
-      id: redditID,
-      comments
-    }
-  })
-
   // removes focus highlighting on button
   $(this).blur()
   
   // find duplicate ID and toggle class too
   findMatchingID(redditID)
+
+  try {
+    await axios.post('/users/${username}/save', {
+      title,
+      url,
+      username,
+      id: redditID,
+      comments
+    })
+  } catch (e) {
+    console.log(e)
+  }
 }
 
 
@@ -56,6 +56,7 @@ function findMatchingID(id) {
 
 // confirm account deletion
 $('#btn-delete').click(() => confirm('Are you sure you want to delete your account?'))
+
 
 // for flash messages
 if ($('.flash-msg').length > 0) {
