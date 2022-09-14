@@ -130,7 +130,7 @@ def register_user():
             db.session.commit()
 
             # confirm registration
-            flash('Thank you for registering. Please login')
+            flash(f'Thank you for registering, {username}')
         except IntegrityError:
             form.username.errors.append('Username taken. Please pick another.')
 
@@ -138,7 +138,7 @@ def register_user():
 
         do_login(new_user)
 
-        return redirect('/login')
+        return redirect(f'/users/{username}')
     else:
         return render_template('/users/register.html', form=form)
 
