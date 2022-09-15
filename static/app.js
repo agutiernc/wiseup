@@ -30,12 +30,24 @@ async function savePost(e) {
   }
 }
 
+// for loading spinner
+const $loading = $('.lds-grid').hide()
+
+const showLoadingSpinner = () => $loading.show()
+const hideLoadingSpinner = () => $loading.hide()
+
 
 // refresh favs tab on click
 $('#favs-tab').click(function(e) {
   e.stopPropagation()
 
+  showLoadingSpinner()
+
   $("#accordionFavs").load(" #accordionFavs > *");
+
+  setTimeout(() => {
+    hideLoadingSpinner()
+  }, 4000)
 })
 
 
@@ -65,6 +77,17 @@ if ($('.flash-msg').length > 0) {
   $(".flash-msg").hide()
 }
 
+
 // for bootstrap tooltips
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+
+// show/hide loading spinner on page load
+$(document).ready(() => {
+  showLoadingSpinner()
+
+  setTimeout(() => {
+    hideLoadingSpinner()
+  }, 3000)
+})
