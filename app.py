@@ -306,6 +306,8 @@ def delete_user():
     if not g.user:
         return redirect('/login')
     
+    do_logout()
+    
     # delete user from db
     db.session.delete(g.user)
     db.session.commit()

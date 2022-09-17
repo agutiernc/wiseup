@@ -106,6 +106,7 @@ class UserModelTestCase(TestCase):
 
     def test_user_favorites(self):
         '''Test Favorites model.'''
+        
         title = 'TIL in 400 BCE Persian engineers created a ice machine in the desert.'
         url = 'https://www.reddit.com/r/todayilearned/comments/xb0in6/til_in_400_bce_persian_engineers_created_a_ice/'
         comments = 'So, basically, thousands of years ago, Persians noticed that ice would build up overnight in the shadows.'
