@@ -41,8 +41,9 @@ headers_get = {
     'Authorization': 'Bearer ' + token_id
 }
 
-res_top = requests.get(OAUTH_ENDPOINT + '/r/TodayILearned/top', headers=headers_get, params=params_get)
 
+# gets api data for top posts and jokes
+res_top = requests.get(OAUTH_ENDPOINT + '/r/TodayILearned/top', headers=headers_get, params=params_get)
 
 res_joke = requests.get(OAUTH_ENDPOINT + '/r/Jokes/top', headers=headers_get, params=params_get_jokes)
 
