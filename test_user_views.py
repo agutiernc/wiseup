@@ -13,11 +13,13 @@ os.environ['DATABASE_URL'] = "postgresql:///wiseup-test"
 
 from app import app, CURR_USER_KEY
 
+# create database
 db.create_all()
 
 # Make Flask errors be real errors, rather than HTML pages with error info
 app.config['TESTING'] = True
 
+# Disable CSRF
 app.config['WTF_CSRF_ENABLED'] = False
 
 
@@ -127,4 +129,56 @@ class UserViewTestCase(TestCase):
             # only one user should exist
             self.assertEqual(len(users), 1)
 
-            
+
+    def test_registration(self):
+        '''Test user registration.'''
+
+        data = {
+            'username': 'tester',
+            'password': 'Password$1',
+            'confirm': 'Password$1',
+            'email': 'tester3@testing.com'
+        }
+
+        with self.client as c:
+            res = c.post('/register/', data=data, follow_redirects=True)
+
+            self.assertEqual(res.status_code, 200)
+
+            users = User.query.all()
+
+            self.assertEqual(len(users), 3)
+
+            new_user = User.query.get(1)
+
+            self.assertEqual(new_user.email, 'tester3@testing.com')
+
+    
+    def test_login(self):
+        '''Test login.'''
+
+        data = {
+            'username': 'tester1',
+            'password': 'Password1!'
+        }
+
+        with self.client as c:
+            res = c.post('/login/', data=data, follow_redirects=True)
+
+            self.assertEqual(res.status_code, 200)
+            self.assertIn(b'Welcome <strong>tester1</strong>', res.data)
+
+    
+    def test_logout(self):
+        '''Test logout.'''
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.u1.id
+
+            res = c.get('/logout', follow_redirects=True)
+
+            self.assertEqual(res.status_code, 200)
+
+            self.assertIn(b'<h1 class="mb-3">Today YOU Learn...</h1>', res.data)
+
