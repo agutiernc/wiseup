@@ -1,5 +1,5 @@
 **/__pycache__
 **/venv
-secrets.py
+secret_words.py
 /templates/users/favs2.html
 /templates/secret.html
