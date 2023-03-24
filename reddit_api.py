@@ -1,6 +1,14 @@
 import requests
 import os
-from secret_words import REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, USERNAME, PASSWORD
+
+# verify file exists, if not use environment variables on heroku
+if os.path.isfile("secret_words.py"):
+    from secret_words import REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, USERNAME, PASSWORD
+else:
+    REDDIT_CLIENT_ID = os.environ.get("REDDIT_CLIENT_ID")
+    REDDIT_CLIENT_SECRET = os.environ.get("REDDIT_CLIENT_SECRET")
+    USERNAME = os.environ.get("USERNAME")
+    PASSWORD = os.environ.get("PASSWORD")
 
 # Authenticate reddit app
 client_auth = requests.auth.HTTPBasicAuth(
