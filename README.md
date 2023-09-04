@@ -1,24 +1,32 @@
-# Capstone One - WiseUp
+# WiseUp - A conversation starter app
 
-## Project @ http://wiseupapp.herokuapp.com
+## Demo
+http://wiseupapp.herokuapp.com
+
+username: `demouser`
+
+password: `1Demouser#`
+
+*Note:* A delay may occur when logging in as the database is initializing.
 
 ## Project API
-https://www.reddit.com/dev/api
-#
-## Description
-> **WiseUp** is an app that helps anyone who is at a loss for words when trying to
-> have a conversation. Sometimes people find it difficult to know what to talk about and probably need some help in trying to break the ice.
-#
-## User Flow
-> By visiting the website, the user is presented 5 random topics from the *todayilearned* subreddit, from reddit.com. The user is shown a topic that has a link for more information. It also has the top comment from the topic's reddit post, as the top comment can be informative or funny. The user is able to use the top comment, along with the topic that they learned, in order to have a conversation. 
->
-> A user can favorite a topic by clicking the star button, that's next to the topic's title. They can also click on the *Favorites* tab, which will list all of their saved favorites.
-> 
-> In addition, the user is presented with *Joke of the Day*. If the user clicks on the joke, it'll reveal the punchline. Which can also be useful in conversation to add some humor.
->
-> Also, the user is given the ability to update their email, password, or delete their account by visiting the *User Setting's* page.
+Leveraging Reddit's API, WiseUp targets *TodayILearned* and *Jokes* subreddits to provide a seamless way to access knowledge and humor. Employing OAuth 2.0 for secure authentication and data retrieval.
 
-#
+https://www.reddit.com/dev/api
+
+## Description
+**WiseUp** is your conversation companion, designed to assist those who struggle to find the right words and break the ice when engaging in conversations.
+
+## User Flow
+When you visit **WiseUp**, you'll be greeted with five random topics sourced from the *TodayILearned* and *Jokes* subreddits on reddit.com. Each topic comes with a handy link for further information. The top comment is also included from the Reddit post, which can be both informative and amusing. This dynamic duo of topic and comment is your conversational icebreaker toolkit.
+
+To keep track of your favorite topics, simply click the star button next to their titles. You can revisit these favorites anytime by clicking on the "Favorites" tab.
+
+But that's not all! **WiseUp** also serves up a daily dose of humor with the "Joke of the Day." Click on the joke to reveal the punchline, adding a touch of laughter to your conversations.
+
+For any account-related actions, head over to the "User Settings" page. There, you can update your email, change your password, or even bid farewell and delete your account.
+
+We're here to make your experience smooth and user-friendly!
 
 ## Technology Stack
 The following were used to create **WiseUp**:
